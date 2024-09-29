@@ -23,27 +23,18 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "proyectoclusterhelm.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3000  # Cambiado a 3000 para que coincida con el puerto de tu aplicación
+              containerPort: 3000
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: 3000  # Actualizado a 3000
+              port: 3000
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 1
@@ -52,7 +43,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 3000  # Actualizado a 3000
+              port: 3000
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 1
@@ -60,17 +51,34 @@ spec:
             failureThreshold: 3
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          # Añadir las credenciales desde los Kubernetes Secrets
           env:
-            - name: DB_HOST
-              value: {{ .Values.env.dbHost }}
-            - name: DB_PORT
-              value: "{{ .Values.env.dbPort }}"
             - name: DB_USER
-              value: {{ .Values.env.dbUser }}
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_USER
             - name: DB_PASSWORD
-              value: {{ .Values.env.dbPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_PASSWORD
             - name: DB_NAME
-              value: {{ .Values.env.dbName }}
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_NAME
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_HOST
+
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -83,5 +91,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
 
 
