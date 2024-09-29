@@ -25,7 +25,6 @@ ingress:
           pathType: ImplementationSpecific
   tls: []
 
-
 # Configuración del servicio
 service:
   type: ClusterIP
@@ -54,11 +53,21 @@ readinessProbe:
   httpGet:
     path: /
 
+# Configuración del autoscaling
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 3
-  targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 70 # Escala cuando el uso de CPU supere el 70%
+
+# Configuración de recursos para habilitar el autoscaling
+resources:
+  requests:
+    cpu: 100m  # 100 milicores es una buena configuración inicial para solicitudes mínimas
+    memory: 128Mi
+  limits:
+    cpu: 200m  # Limite de CPU, para controlar el máximo uso de recursos
+    memory: 256Mi
 
 nodeSelector: {}
 tolerations: []
@@ -67,4 +76,5 @@ affinity: {}
 serviceAccount:
   create: true  # Cambia a false si no quieres crear una ServiceAccount
   name: ""      # Deja esto vacío si deseas que Helm genere el nombre
+
 

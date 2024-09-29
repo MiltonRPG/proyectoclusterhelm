@@ -54,7 +54,12 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests:
+              cpu: "100m"  # Recurso mínimo de CPU
+              memory: "128Mi"
+            limits:
+              cpu: "500m"  # Límite de CPU, para escalar hasta aquí
+              memory: "512Mi"
           env:
             - name: DB_HOST
               valueFrom:
@@ -93,6 +98,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
 
 
 
