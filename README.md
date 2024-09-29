@@ -1,3 +1,11 @@
+# AVISO
+
+En repositorio se podran ver todas las ramas que se han ido desarrollando para certificar el funcionamiento, objetivo por objetivo. 
+No obstante, la rama de exponer la aplicacion con ingress, nunca logró ser desplegada al no poder acceder a la aplicacion de ninguna forma. 
+
+Por lo tanto la rama principall esta mergeada con el resto de ramas a excepción de la rama de exposicion con ingress
+
+
 # Proyecto Kubernetes Helm - Aplicación de Tareas
 
 Este proyecto despliega una aplicación Node.js conectada a una base de datos MySQL utilizando Helm y Kubernetes. La aplicación permite gestionar una lista de tareas diarias a través de un calendario y soporta operaciones CRUD (Crear, Leer, Buscar) para los usuarios y sus respectivas tareas.
