@@ -1,6 +1,6 @@
 # Configuraciones básicas del chart
 
-replicaCount: 1
+replicaCount: 2
 
 image:
   repository: miltonrpg/mi-app-nodejs
@@ -55,9 +55,9 @@ readinessProbe:
     path: /
 
 autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 
 nodeSelector: {}
