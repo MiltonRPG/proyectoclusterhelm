@@ -105,6 +105,8 @@ sequelize.authenticate()
     console.error('Error al conectar o sincronizar la base de datos:', err);
   });
 
+app.set('trust proxy', true);
+
 
 
 

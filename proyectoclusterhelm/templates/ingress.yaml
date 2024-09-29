@@ -8,11 +8,10 @@ metadata:
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
+    nginx.ingress.kubernetes.io/rewrite-target: /
   {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
-  ingressClassName: {{ . }}
-  {{- end }}
+  ingressClassName: nginx  # Corregido: se fija nginx como la clase del Ingress
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -41,3 +40,5 @@ spec:
           {{- end }}
     {{- end }}
 {{- end }}
+
+

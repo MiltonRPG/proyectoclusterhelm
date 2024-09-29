@@ -15,14 +15,15 @@ secrets:
   dbHost: "mysql"
 
 ingress:
-  enabled: false  # Cambia a true si deseas habilitar Ingress
-  className: ""
-  annotations: {}
+  enabled: true
+  className: "nginx"  # Dependiendo del controlador Ingress que uses (generalmente es nginx)
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: chart-example.local
+    - host: micalendario  # Cambia esto por el dominio o IP que desees
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: []
 
 # Configuración del servicio
