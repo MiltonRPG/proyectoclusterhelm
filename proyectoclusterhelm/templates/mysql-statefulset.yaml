@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  serviceName: "mysql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: bitnami/mysql:latest
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"  # Cambia esto por tu contraseña real
+            - name: MYSQL_DATABASE
+              value: "proyecto_kubernetes"  # Cambia esto por el nombre de tu base de datos
+            - name: MYSQL_USER
+              value: "kubernetes"  # Cambia esto por el usuario que usas en tu app
+            - name: MYSQL_PASSWORD
+              value: "kubernetes"  # Cambia esto por la contraseña que usas en tu app
+            - name: MYSQL_INITDB_SKIP_TZINFO
+              value: "1"
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "no"
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-persistent-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

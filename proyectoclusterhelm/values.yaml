@@ -1,0 +1,83 @@
+# Default values for proyectoclusterhelm.
+# Configuraciones básicas del chart
+
+replicaCount: 1
+
+image:
+  repository: miltonrpg/mi-app-nodejs
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+persistence:
+  enabled: true
+  accessModes: ReadWriteOnce
+  size: 1Gi
+  
+volumeMounts:
+  - name: mysql-persistent-storage
+    mountPath: /var/lib/mysql
+
+volumes:
+  - name: mysql-persistent-storage
+    persistentVolumeClaim:
+      claimName: mysql-pvc      
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 3000
+readinessProbe:
+  httpGet:
+    path: /
+    port: 3000
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Añadir variables de entorno para la conexión a la base de datos MySQL
+env:
+  dbHost: "mysql"       # El nombre del servicio MySQL en Kubernetes
+  dbPort: 3306
+  dbUser: "kubernetes"  # Cambia esto por el usuario de la base de datos
+  dbPassword: "kubernetes"  # Cambia por la contraseña de la base de datos
+  dbName: "proyecto_kubernetes"  # Cambia por el nombre de tu base de datos

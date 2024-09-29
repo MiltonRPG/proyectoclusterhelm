@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de pendientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        .resultados {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lista de pendientes</h1>
+
+    <!-- Formulario para crear usuario -->
+    <h2>Crear Usuario</h2>
+    <form id="formCrearUsuario">
+        <input type="text" id="nombreUsuario" placeholder="Nombre del usuario" required>
+        <input type="text" id="identificacionUsuario" placeholder="Identificación" required>
+        <button type="submit">Crear Usuario</button>
+    </form>
+
+    <!-- Formulario para añadir tarea -->
+    <h2>Añadir Tarea</h2>
+    <form id="formAñadirTarea">
+        <input type="text" id="identificacionUsuarioTarea" placeholder="Identificación del usuario" required>
+        <input type="date" id="fechaTarea" required>
+        <input type="text" id="descripcionTarea" placeholder="Descripción de la tarea" required>
+        <button type="submit">Añadir Tarea</button>
+    </form>
+
+    <!-- Formulario para consultar tareas -->
+    <h2>Consultar Tareas</h2>
+    <form id="formConsultarTareas">
+        <input type="text" id="identificacionUsuarioConsulta" placeholder="Identificación del usuario" required>
+        <input type="date" id="fechaConsulta" required>
+        <button type="submit">Consultar Tareas</button>
+    </form>
+
+    <!-- Resultados -->
+    <div class="resultados">
+        <h2>Resultados</h2>
+        <pre id="resultados"></pre>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:3000';
+
+        // Crear usuario
+        document.getElementById('formCrearUsuario').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const nombre = document.getElementById('nombreUsuario').value;
+            const identificacion = document.getElementById('identificacionUsuario').value;
+
+            const response = await fetch(`${apiUrl}/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, identificacion })
+            });
+            const data = await response.json();
+            document.getElementById('resultados').textContent = JSON.stringify(data, null, 2);
+        });
+
+        // Añadir tarea
+        document.getElementById('formAñadirTarea').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const identificacionUsuario = document.getElementById('identificacionUsuarioTarea').value;
+            const fecha = document.getElementById('fechaTarea').value;
+            const descripcion = document.getElementById('descripcionTarea').value;
+
+            const response = await fetch(`${apiUrl}/usuarios/${identificacionUsuario}/tareas`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fecha, descripcion })
+            });
+            const data = await response.json();
+            document.getElementById('resultados').textContent = JSON.stringify(data, null, 2);
+        });
+
+        // Consultar tareas
+        document.getElementById('formConsultarTareas').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const identificacionUsuario = document.getElementById('identificacionUsuarioConsulta').value;
+            const fecha = document.getElementById('fechaConsulta').value;
+
+            const response = await fetch(`${apiUrl}/usuarios/${identificacionUsuario}/tareas?fecha=${fecha}`);
+            const data = await response.json();
+            document.getElementById('resultados').textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
+
+</body>
+</html>
+
+
